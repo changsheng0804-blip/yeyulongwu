@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>一夜鱼龙舞</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0a0a0f;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 100vh; padding: 2rem;
+  }
+  .container {
+    width: 100%; max-width: 860px;
+  }
+  h1 {
+    text-align: center; font-size: 1.6rem; font-weight: 300;
+    letter-spacing: 0.3em; color: #c8a060; margin-bottom: 1.5rem;
+    text-shadow: 0 0 30px rgba(200,160,96,0.3);
+  }
+  .canvas-wrap {
+    background: #000; border-radius: 12px; overflow: hidden; margin-bottom: 1.2rem;
+    box-shadow: 0 0 60px rgba(200,160,96,0.08);
+  }
+  canvas { width: 100%; height: 520px; display: block; }
+  .controls {
+    display: flex; flex-direction: column; gap: 14px;
+    background: rgba(255,255,255,0.03); border-radius: 12px; padding: 1.2rem 1.4rem;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .ctrl-row {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .ctrl-row label {
+    font-size: 13px; color: #888; min-width: 88px; flex-shrink: 0;
+  }
+  .ctrl-row input[type="range"] {
+    flex: 1; -webkit-appearance: none; appearance: none;
+    height: 6px; border-radius: 3px; background: rgba(255,255,255,0.12);
+    outline: none; cursor: pointer;
+  }
+  .ctrl-row input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #c8a060; cursor: pointer; border: none;
+    box-shadow: 0 0 10px rgba(200,160,96,0.5);
+  }
+  .ctrl-row .val {
+    font-size: 13px; font-weight: 500; min-width: 36px; text-align: right;
+    color: #c8a060; font-variant-numeric: tabular-nums;
+  }
+  .btn-row { display: flex; gap: 10px; margin-top: 2px; }
+  .btn-row button {
+    flex: 1; padding: 10px 0; border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px; background: rgba(255,255,255,0.05);
+    color: #c0c0c0; font-size: 13px; font-family: inherit;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-row button:hover {
+    background: rgba(255,255,255,0.1); border-color: rgba(200,160,96,0.4);
+    color: #fff;
+  }
+  @media (max-width: 640px) {
+    body { padding: 0.8rem; }
+    h1 { font-size: 1.2rem; letter-spacing: 0.2em; }
+    canvas { height: 380px; }
+    .controls { padding: 0.8rem; gap: 10px; }
+    .ctrl-row label { font-size: 12px; min-width: 68px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>一夜鱼龙舞</h1>
+  <div class="canvas-wrap">
+    <canvas id="canvas"></canvas>
+  </div>
+  <div class="controls">
+    <div class="ctrl-row">
+      <label>意境形态 (x)</label>
+      <input type="range" id="xSlider" min="-60" max="60" step="1" value="-13">
+      <span class="val" id="xOut">-13</span>
+    </div>
+    <div class="ctrl-row">
+      <label>流光速度</label>
+      <input type="range" id="speedSlider" min="0.2" max="3" step="0.1" value="0.7">
+      <span class="val" id="speedOut">0.7</span>
+    </div>
+    <div class="ctrl-row">
+      <label>星火密度</label>
+      <input type="range" id="countSlider" min="2000" max="20000" step="500" value="7500">
+      <span class="val" id="countOut">7500</span>
+    </div>
+    <div class="btn-row">
+      <button id="playBtn">暂停</button>
+      <button id="morphBtn">自动变幻:关</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const xSlider = document.getElementById('xSlider');
+  const xOut = document.getElementById('xOut');
+  const speedSlider = document.getElementById('speedSlider');
+  const speedOut = document.getElementById('speedOut');
+  const countSlider = document.getElementById('countSlider');
+  const countOut = document.getElementById('countOut');
+  const playBtn = document.getElementById('playBtn');
+  const morphBtn = document.getElementById('morphBtn');
+
+  let playing = true;
+  let autoMorph = false;
+  let t = 0;
+  let xVal = parseFloat(xSlider.value);
+
+  function resize(){
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  xSlider.addEventListener('input', function(){
+    xVal = parseFloat(xSlider.value);
+    xOut.textContent = xVal.toFixed(0);
+  });
+  speedSlider.addEventListener('input', function(){
+    speedOut.textContent = parseFloat(speedSlider.value).toFixed(1);
+  });
+  countSlider.addEventListener('input', function(){
+    countOut.textContent = countSlider.value;
+  });
+  playBtn.addEventListener('click', function(){
+    playing = !playing;
+    playBtn.textContent = playing ? '暂停' : '播放';
+    if(playing){ last = performance.now(); requestAnimationFrame(loop); }
+  });
+  morphBtn.addEventListener('click', function(){
+    autoMorph = !autoMorph;
+    morphBtn.textContent = '自动变幻:' + (autoMorph ? '开' : '关');
+    xSlider.disabled = autoMorph;
+  });
+  xSlider.disabled = autoMorph;
+
+  function computeXY(i, t, xv){
+    const y = i/280;
+    const e = y/6 - 15;
+    const k = xv*Math.cos(i - t/10)*1.2;
+    const d = Math.sqrt(k*k+e*e) + Math.sin(e/3+t/2.5)/1.8;
+    const q = (y*k/d)*(3.5+Math.sin(2.5*d+y/1.8-2.2*t));
+    const c = d/1.8+1-t/5;
+    const X = q+65*Math.cos(c)+200;
+    const Y = 400-(q*Math.sin(c)+32*d-160);
+    return [X,Y];
+  }
+
+  let last = performance.now();
+  function loop(now){
+    if(!playing) return;
+    const dt = Math.min(now-last, 50);
+    last = now;
+    const speed = parseFloat(speedSlider.value);
+    t += dt*0.001*speed*2;
+
+    const curX = autoMorph ? 45*Math.sin(t*0.2) : xVal;
+    if(autoMorph){ xOut.textContent = curX.toFixed(0); }
+
+    const N = parseInt(countSlider.value, 10);
+    let minX=Infinity, maxX=-Infinity, minY=Infinity, maxY=-Infinity;
+    const pts = new Float32Array(N*2);
+    for(let i=1;i<=N;i++){
+      const p = computeXY(i, t, curX);
+      pts[(i-1)*2] = p[0];
+      pts[(i-1)*2+1] = p[1];
+      if(p[0]<minX) minX=p[0];
+      if(p[0]>maxX) maxX=p[0];
+      if(p[1]<minY) minY=p[1];
+      if(p[1]>maxY) maxY=p[1];
+    }
+
+    const rect = canvas.getBoundingClientRect();
+    const w = rect.width, h = rect.height;
+    const pad = 20;
+    const spanX = Math.max(maxX-minX, 1);
+    const spanY = Math.max(maxY-minY, 1);
+    const scale = Math.min((w-2*pad)/spanX, (h-2*pad)/spanY);
+    const offX = pad + (w-2*pad - spanX*scale)/2 - minX*scale;
+    const offY = pad + (h-2*pad - spanY*scale)/2 - minY*scale;
+
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = 'rgba(0,0,0,0.08)';
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.globalCompositeOperation = 'lighter';
+    for(let i=1;i<=N;i++){
+      const X = pts[(i-1)*2]*scale + offX;
+      const Y = pts[(i-1)*2+1]*scale + offY;
+
+      const hue = (30 + 30 * Math.sin(i/N * Math.PI + t*0.5)) % 360;
+      const sat = 90 + 10 * Math.random();
+      const light = 50 + 30 * Math.random();
+
+      ctx.fillStyle = 'hsla(' + hue + ',' + sat + '%,' + light + '%,0.9)';
+      const size = 1.2 + Math.random() * 1.0;
+      ctx.fillRect(X, Y, size, size);
+    }
+
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
