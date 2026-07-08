@@ -1,0 +1,625 @@
+{
+  "config": {
+    "numSamples": 3000,
+    "numFrames": 150,
+    "sampleN": 1500,
+    "seed": 42,
+    "timestamp": "2026-07-08T03:02:58.007Z"
+  },
+  "top20": [
+    {
+      "params": {
+        "preset": 2,
+        "x": -35.96,
+        "speed": 1.95,
+        "particles": 2500,
+        "spring": 2.32,
+        "swirl": 1.85,
+        "trail": 9
+      },
+      "metrics": {
+        "meanRadius": 1.3024674464274495,
+        "cvRadius": 0.0689609267048634,
+        "meanKnn": 0.051107372679317205,
+        "cvKnn": 0.48325510517009956,
+        "meanAnisotropy": 0.37647709901555704,
+        "cvAnisotropy": 0.17015248252444226,
+        "meanSpeed": 1.1385064455290965,
+        "pairDistVar": 0.6419323878412366,
+        "knnVar": 0.0005848762219842045,
+        "spatialScore": 0.6901844391487462,
+        "temporalScore": 0.984966843384319,
+        "structureScore": 0.9977440714169773,
+        "pulseScore": 0.9665102103401991,
+        "activityScore": 1,
+        "composite": 0.8993840814789678
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": -38.96,
+        "speed": 1.79,
+        "particles": 7500,
+        "spring": 2.64,
+        "swirl": 1.22,
+        "trail": 9
+      },
+      "metrics": {
+        "meanRadius": 1.2822491317259157,
+        "cvRadius": 0.07109301708186551,
+        "meanKnn": 0.05106571737516817,
+        "cvKnn": 0.4930524805870572,
+        "meanAnisotropy": 0.35162354975112414,
+        "cvAnisotropy": 0.16103459325944636,
+        "meanSpeed": 1.186356006834008,
+        "pairDistVar": 0.5946722575421642,
+        "knnVar": 0.0005831908741068685,
+        "spatialScore": 0.6898749380970581,
+        "temporalScore": 0.9774001524478109,
+        "structureScore": 0.9904933099348683,
+        "pulseScore": 0.9861049611741144,
+        "activityScore": 1,
+        "composite": 0.8975463431421987
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": -35.69,
+        "speed": 1.55,
+        "particles": 7000,
+        "spring": 3.05,
+        "swirl": 0.02,
+        "trail": 9
+      },
+      "metrics": {
+        "meanRadius": 1.3028526496714068,
+        "cvRadius": 0.0806593256037349,
+        "meanKnn": 0.05381763193710039,
+        "cvKnn": 0.5418562133759011,
+        "meanAnisotropy": 0.3921903021294617,
+        "cvAnisotropy": 0.1862121506169346,
+        "meanSpeed": 1.3247459921374207,
+        "pairDistVar": 0.6393703219256038,
+        "knnVar": 0.0006640180321526923,
+        "spatialScore": 0.7102091542064873,
+        "temporalScore": 0.9199930096496339,
+        "structureScore": 0.9997510865725415,
+        "pulseScore": 1,
+        "activityScore": 1,
+        "composite": 0.89299877031749
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": -38.35,
+        "speed": 0.3,
+        "particles": 6500,
+        "spring": 8.3,
+        "swirl": 0.03,
+        "trail": 8
+      },
+      "metrics": {
+        "meanRadius": 1.443359414211355,
+        "cvRadius": 0.20175553407614563,
+        "meanKnn": 0.1517430394252451,
+        "cvKnn": 0.5642339736787025,
+        "meanAnisotropy": 0.34136362962338274,
+        "cvAnisotropy": 0.5233656424079592,
+        "meanSpeed": 7.159589359508139,
+        "pairDistVar": 0.6863285732415613,
+        "knnVar": 0.004409934035828936,
+        "spatialScore": 0.9242983631494317,
+        "temporalScore": 0.6749896786691475,
+        "structureScore": 0.9860644444179569,
+        "pulseScore": 1,
+        "activityScore": 1,
+        "composite": 0.8925530397166056
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": -27.88,
+        "speed": 1.29,
+        "particles": 4000,
+        "spring": 4.38,
+        "swirl": 0.01,
+        "trail": 10
+      },
+      "metrics": {
+        "meanRadius": 1.3545464844153638,
+        "cvRadius": 0.10058828957406676,
+        "meanKnn": 0.05929132081943359,
+        "cvKnn": 0.5484433010864694,
+        "meanAnisotropy": 0.3203399952394314,
+        "cvAnisotropy": 0.4002032849279938,
+        "meanSpeed": 1.6412184588969663,
+        "pairDistVar": 0.704589897638602,
+        "knnVar": 0.0008081656672483355,
+        "spatialScore": 0.7498117501644748,
+        "temporalScore": 0.8839178111078579,
+        "structureScore": 0.9744316674727235,
+        "pulseScore": 1,
+        "activityScore": 1,
+        "composite": 0.8895308946944878
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": -37.98,
+        "speed": 0.32,
+        "particles": 12500,
+        "spring": 12.6,
+        "swirl": 0.68,
+        "trail": 9
+      },
+      "metrics": {
+        "meanRadius": 1.394929846955185,
+        "cvRadius": 0.2502053459216872,
+        "meanKnn": 0.13752884533956428,
+        "cvKnn": 0.5568931794677197,
+        "meanAnisotropy": 0.3506770439146467,
+        "cvAnisotropy": 0.4953451445981402,
+        "meanSpeed": 8.063659395045178,
+        "pairDistVar": 0.6655048712264642,
+        "knnVar": 0.0037063059200270775,
+        "spatialScore": 0.9762811014761195,
+        "temporalScore": 0.5921817444013341,
+        "structureScore": 0.9901195276404691,
+        "pulseScore": 1,
+        "activityScore": 1,
+        "composite": 0.8884596484532866
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": -32.13,
+        "speed": 0.44,
+        "particles": 8000,
+        "spring": 7.8,
+        "swirl": 0.03,
+        "trail": 3
+      },
+      "metrics": {
+        "meanRadius": 1.3834526168055445,
+        "cvRadius": 0.2044138768777911,
+        "meanKnn": 0.11747032457428241,
+        "cvKnn": 0.6142172185440304,
+        "meanAnisotropy": 0.46327594477639256,
+        "cvAnisotropy": 0.4772538010928636,
+        "meanSpeed": 5.237283481906092,
+        "pairDistVar": 0.706976813522559,
+        "knnVar": 0.002884872685308425,
+        "spatialScore": 0.9995001829377251,
+        "temporalScore": 0.5689105384356141,
+        "structureScore": 0.9837905844557482,
+        "pulseScore": 1,
+        "activityScore": 1,
+        "composite": 0.8880253356041581
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": -34.23,
+        "speed": 2.03,
+        "particles": 2500,
+        "spring": 6.52,
+        "swirl": 0.07,
+        "trail": 9
+      },
+      "metrics": {
+        "meanRadius": 1.3404959095805165,
+        "cvRadius": 0.07950370093369946,
+        "meanKnn": 0.050141288628022675,
+        "cvKnn": 0.5239298111566453,
+        "meanAnisotropy": 0.35089638970521575,
+        "cvAnisotropy": 0.35405433995174196,
+        "meanSpeed": 1.1174334530119574,
+        "pairDistVar": 0.6902504839605025,
+        "knnVar": 0.0005428376738760766,
+        "spatialScore": 0.682994334000213,
+        "temporalScore": 0.9422957787941824,
+        "structureScore": 0.9902067810318346,
+        "pulseScore": 1,
+        "activityScore": 1,
+        "composite": 0.888023940156568
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": -26.96,
+        "speed": 1.34,
+        "particles": 2500,
+        "spring": 4.2,
+        "swirl": 0.55,
+        "trail": 6
+      },
+      "metrics": {
+        "meanRadius": 1.354285934805591,
+        "cvRadius": 0.09792747900447353,
+        "meanKnn": 0.058307210996379255,
+        "cvKnn": 0.5344214133940502,
+        "meanAnisotropy": 0.29063814986943437,
+        "cvAnisotropy": 0.44854325385371363,
+        "meanSpeed": 1.580940862087972,
+        "pairDistVar": 0.6978022387687852,
+        "knnVar": 0.0007954007233505778,
+        "spatialScore": 0.7427886223990555,
+        "temporalScore": 0.9072725434309825,
+        "structureScore": 0.9523559807259508,
+        "pulseScore": 1,
+        "activityScore": 1,
+        "composite": 0.88774371775895
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": 42.64,
+        "speed": 1.67,
+        "particles": 8000,
+        "spring": 5.56,
+        "swirl": 0.39,
+        "trail": 6
+      },
+      "metrics": {
+        "meanRadius": 1.3268165227419768,
+        "cvRadius": 0.092841139712764,
+        "meanKnn": 0.0579118696038058,
+        "cvKnn": 0.479251389606196,
+        "meanAnisotropy": 0.24115656808451855,
+        "cvAnisotropy": 0.1653070442691351,
+        "meanSpeed": 1.3268604768392234,
+        "pairDistVar": 0.5465177174515555,
+        "knnVar": 0.0007080935078307489,
+        "spatialScore": 0.7399542862666689,
+        "temporalScore": 0.9715388016538397,
+        "structureScore": 0.9021408337096254,
+        "pulseScore": 0.958502779212392,
+        "activityScore": 1,
+        "composite": 0.8862564726421062
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": -33.01,
+        "speed": 0.37,
+        "particles": 7500,
+        "spring": 4.57,
+        "swirl": 0.01,
+        "trail": 7
+      },
+      "metrics": {
+        "meanRadius": 1.3827485108777922,
+        "cvRadius": 0.18239002512143412,
+        "meanKnn": 0.14772476543109508,
+        "cvKnn": 0.6132186105413677,
+        "meanAnisotropy": 0.4175632083508649,
+        "cvAnisotropy": 0.5637934050542179,
+        "meanSpeed": 4.742468780906858,
+        "pairDistVar": 0.6776499421291349,
+        "knnVar": 0.004304208780588412,
+        "spatialScore": 0.9417157824766745,
+        "temporalScore": 0.6154083469952993,
+        "structureScore": 0.9987417461942324,
+        "pulseScore": 1,
+        "activityScore": 1,
+        "composite": 0.8860522580403852
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": -31.73,
+        "speed": 0.28,
+        "particles": 6000,
+        "spring": 7.67,
+        "swirl": 0.43,
+        "trail": 1
+      },
+      "metrics": {
+        "meanRadius": 1.478273597301203,
+        "cvRadius": 0.21217255564823612,
+        "meanKnn": 0.16439509768776703,
+        "cvKnn": 0.5167357113650437,
+        "meanAnisotropy": 0.49103435386933386,
+        "cvAnisotropy": 0.5784744988912317,
+        "meanSpeed": 7.108881700542211,
+        "pairDistVar": 0.7751446074231948,
+        "knnVar": 0.005000393425900235,
+        "spatialScore": 0.8572904593422708,
+        "temporalScore": 0.747436799728364,
+        "structureScore": 0.9667401620737642,
+        "pulseScore": 1,
+        "activityScore": 1,
+        "composite": 0.8857313782532132
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": 39.58,
+        "speed": 2,
+        "particles": 2000,
+        "spring": 5.72,
+        "swirl": 0,
+        "trail": 1
+      },
+      "metrics": {
+        "meanRadius": 1.3281401720631294,
+        "cvRadius": 0.08650661083402335,
+        "meanKnn": 0.055090088320526816,
+        "cvKnn": 0.4549655119495513,
+        "meanAnisotropy": 0.2608251305734267,
+        "cvAnisotropy": 0.14753884692626848,
+        "meanSpeed": 1.128479137610577,
+        "pairDistVar": 0.5717307678378599,
+        "knnVar": 0.0006303777326383187,
+        "spatialScore": 0.719525149198529,
+        "temporalScore": 0.9904903005413523,
+        "structureScore": 0.9239846938537168,
+        "pulseScore": 0.9099310238991026,
+        "activityScore": 1,
+        "composite": 0.8854693957482361
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": -36.76,
+        "speed": 0.44,
+        "particles": 9000,
+        "spring": 6.93,
+        "swirl": 1.3,
+        "trail": 3
+      },
+      "metrics": {
+        "meanRadius": 1.3618501313832976,
+        "cvRadius": 0.1922028777537299,
+        "meanKnn": 0.11820420329741861,
+        "cvKnn": 0.6395343902668673,
+        "meanAnisotropy": 0.3757066129125223,
+        "cvAnisotropy": 0.4371477114157767,
+        "meanSpeed": 4.992306567977691,
+        "pairDistVar": 0.6495288772291129,
+        "knnVar": 0.0029687990690241877,
+        "spatialScore": 0.9997480875323846,
+        "temporalScore": 0.5425978994865611,
+        "structureScore": 0.9975940472970843,
+        "pulseScore": 1,
+        "activityScore": 1,
+        "composite": 0.8849724129556267
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": -36.5,
+        "speed": 2.1,
+        "particles": 5500,
+        "spring": 6.82,
+        "swirl": 0.42,
+        "trail": 10
+      },
+      "metrics": {
+        "meanRadius": 1.3277367283480863,
+        "cvRadius": 0.08053004535788344,
+        "meanKnn": 0.049523952270185294,
+        "cvKnn": 0.5330534869850988,
+        "meanAnisotropy": 0.3621096555079558,
+        "cvAnisotropy": 0.2323260126787124,
+        "meanSpeed": 1.088329081843436,
+        "pairDistVar": 0.6620113902686567,
+        "knnVar": 0.0005294920813839683,
+        "spatialScore": 0.6783872581798743,
+        "temporalScore": 0.930834821570151,
+        "structureScore": 0.9941572247471996,
+        "pulseScore": 1,
+        "activityScore": 1,
+        "composite": 0.8847641890332999
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": -38.61,
+        "speed": 1.84,
+        "particles": 13500,
+        "spring": 3.94,
+        "swirl": 1.58,
+        "trail": 1
+      },
+      "metrics": {
+        "meanRadius": 1.3023036679788278,
+        "cvRadius": 0.06866791231297484,
+        "meanKnn": 0.049774257682890566,
+        "cvKnn": 0.41109442937992374,
+        "meanAnisotropy": 0.36508914026169387,
+        "cvAnisotropy": 0.09972912021293476,
+        "meanSpeed": 1.1828936834178643,
+        "pairDistVar": 0.6155296717741542,
+        "knnVar": 0.0005033653965313941,
+        "spatialScore": 0.6802563695555502,
+        "temporalScore": 0.9977272376789401,
+        "structureScore": 0.9950377888645288,
+        "pulseScore": 0.8221888587598475,
+        "activityScore": 1,
+        "composite": 0.8844870533785171
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": -31.69,
+        "speed": 1.15,
+        "particles": 12500,
+        "spring": 6.12,
+        "swirl": 0.02,
+        "trail": 9
+      },
+      "metrics": {
+        "meanRadius": 1.3515990307971824,
+        "cvRadius": 0.11515220838481023,
+        "meanKnn": 0.06137444422809523,
+        "cvKnn": 0.5729236857677293,
+        "meanAnisotropy": 0.42270918225179227,
+        "cvAnisotropy": 0.2845126080312908,
+        "meanSpeed": 1.9353289592428529,
+        "pairDistVar": 0.7071530322458891,
+        "knnVar": 0.0008494539071098355,
+        "spatialScore": 0.7645161177818814,
+        "temporalScore": 0.8215897287173491,
+        "structureScore": 0.9978972874425144,
+        "pulseScore": 1,
+        "activityScore": 1,
+        "composite": 0.8842265893745302
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": 40.81,
+        "speed": 2.03,
+        "particles": 10500,
+        "spring": 5.39,
+        "swirl": 0.01,
+        "trail": 7
+      },
+      "metrics": {
+        "meanRadius": 1.3250159086215103,
+        "cvRadius": 0.08301696254418549,
+        "meanKnn": 0.05500279820814825,
+        "cvKnn": 0.44381888475529024,
+        "meanAnisotropy": 0.2595500997272444,
+        "cvAnisotropy": 0.14426948039609352,
+        "meanSpeed": 1.1099335367181302,
+        "pairDistVar": 0.5616869469469972,
+        "knnVar": 0.0006168494020646097,
+        "spatialScore": 0.7188879992739283,
+        "temporalScore": 0.9960070890622899,
+        "structureScore": 0.9226410657973031,
+        "pulseScore": 0.8876377695105805,
+        "activityScore": 1,
+        "composite": 0.8840922154481348
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": 38.99,
+        "speed": 1.32,
+        "particles": 5000,
+        "spring": 6.6,
+        "swirl": 0.03,
+        "trail": 7
+      },
+      "metrics": {
+        "meanRadius": 1.346824773194473,
+        "cvRadius": 0.11389824435829146,
+        "meanKnn": 0.06230523389171747,
+        "cvKnn": 0.5249157295853782,
+        "meanAnisotropy": 0.2473394074254923,
+        "cvAnisotropy": 0.20945790132165998,
+        "meanSpeed": 1.7240860965425817,
+        "pairDistVar": 0.5836773967955107,
+        "knnVar": 0.0008435047280875737,
+        "spatialScore": 0.7710102611790617,
+        "temporalScore": 0.8984791537165476,
+        "structureScore": 0.9092606374632752,
+        "pulseScore": 1,
+        "activityScore": 1,
+        "composite": 0.8832380261486742
+      }
+    },
+    {
+      "params": {
+        "preset": 2,
+        "x": -31.08,
+        "speed": 0.36,
+        "particles": 14000,
+        "spring": 4.39,
+        "swirl": 2.5,
+        "trail": 9
+      },
+      "metrics": {
+        "meanRadius": 1.3866884292845816,
+        "cvRadius": 0.18770047790355482,
+        "meanKnn": 0.1526533989943376,
+        "cvKnn": 0.6011674982052008,
+        "meanAnisotropy": 0.418563096615664,
+        "cvAnisotropy": 0.5872840215005403,
+        "meanSpeed": 4.86317839777942,
+        "pairDistVar": 0.6830223248865089,
+        "knnVar": 0.004642202373208767,
+        "spatialScore": 0.9200747622761087,
+        "temporalScore": 0.6290266156131965,
+        "structureScore": 0.9985945047330415,
+        "pulseScore": 1,
+        "activityScore": 1,
+        "composite": 0.8829277087693921
+      }
+    }
+  ],
+  "summary_by_preset": [
+    {
+      "preset": 0,
+      "topScore": 0.860895000538377,
+      "topParams": {
+        "preset": 0,
+        "x": -54.63,
+        "speed": 0.91,
+        "particles": 4500,
+        "spring": 4.32,
+        "swirl": 0.61,
+        "trail": 10
+      }
+    },
+    {
+      "preset": 1,
+      "topScore": 0.870730810079689,
+      "topParams": {
+        "preset": 1,
+        "x": -36.92,
+        "speed": 1.25,
+        "particles": 16000,
+        "spring": 1.47,
+        "swirl": 2.1,
+        "trail": 9
+      }
+    },
+    {
+      "preset": 2,
+      "topScore": 0.8993840814789678,
+      "topParams": {
+        "preset": 2,
+        "x": -35.96,
+        "speed": 1.95,
+        "particles": 2500,
+        "spring": 2.32,
+        "swirl": 1.85,
+        "trail": 9
+      }
+    },
+    {
+      "preset": 3,
+      "topScore": 0.8380591679526826,
+      "topParams": {
+        "preset": 3,
+        "x": -53.47,
+        "speed": 1.36,
+        "particles": 7000,
+        "spring": 14.81,
+        "swirl": 0.01,
+        "trail": 2
+      }
+    }
+  ]
+}
