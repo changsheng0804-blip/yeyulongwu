@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>一夜鱼龙舞 · 三维光雕 · 会唱歌</title>
+<style>
+  body{margin:0;background:#0a0b10;color:#e8eaed;font-family:system-ui,"Microsoft YaHei",sans-serif;display:flex;justify-content:center;}
+  .wrap{width:min(980px,100vw);padding:16px;box-sizing:border-box;}
+  h1{font-size:16px;font-weight:600;margin:0 0 10px;}
+  #canvas{width:100%;height:560px;display:block;border-radius:12px;background:#000;cursor:grab;touch-action:none;}
+  .row{display:flex;align-items:center;gap:12px;margin-top:10px;}
+  .row label{font-size:13px;color:#9aa0a6;min-width:72px;}
+  .row input{flex:1;}
+  .val{font-size:13px;min-width:44px;text-align:right;}
+  .btns{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;align-items:center;}
+  button{background:#171a24;color:#e8eaed;border:1px solid #2b3042;border-radius:8px;padding:7px 14px;font-size:13px;cursor:pointer;}
+  button:hover{border-color:#4a5578;}
+  button.on{background:#33406e;border-color:#5b6cc0;}
+  #musicBtn.on{background:#6e3352;border-color:#c05b8a;}
+  .hint{font-size:12px;color:#8a90a0;margin-top:10px;text-align:center;line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>一夜鱼龙舞 · 三维光雕 —— 图形生旋律,旋律催图形</h1>
+  <canvas id="canvas"></canvas>
+  <div class="btns">
+    <button class="preset on" data-p="0">鱼龙舞</button>
+    <button class="preset" data-p="1">球谐光雕</button>
+    <button class="preset" data-p="2">环面绸带</button>
+    <button class="preset" data-p="3">星涡</button>
+    <span style="flex:1"></span>
+    <button id="musicBtn">♪ 让它唱歌</button>
+    <button id="playBtn">暂停</button>
+    <button id="morphBtn" class="on">自动变形:开</button>
+    <button id="spinBtn" class="on">自动旋转:开</button>
+  </div>
+  <div class="row">
+    <label>形态参数 x</label>
+    <input type="range" id="xSlider" min="-60" max="60" step="1" value="20">
+    <span class="val" id="xOut">20</span>
+  </div>
+  <div class="row">
+    <label>动画速度</label>
+    <input type="range" id="speedSlider" min="0.2" max="3" step="0.1" value="1">
+    <span class="val" id="speedOut">1.0</span>
+  </div>
+  <div class="row">
+    <label>粒子数量</label>
+    <input type="range" id="countSlider" min="2000" max="16000" step="500" value="10000">
+    <span class="val" id="countOut">10000</span>
+  </div>
+  <div class="row">
+    <label>跟随力</label>
+    <input type="range" id="springSlider" min="1" max="15" step="0.5" value="6">
+    <span class="val" id="springOut">6.0</span>
+  </div>
+  <div class="row">
+    <label>漩涡力</label>
+    <input type="range" id="swirlSlider" min="0" max="3" step="0.1" value="0.8">
+    <span class="val" id="swirlOut">0.8</span>
+  </div>
+  <div class="row">
+    <label>光迹长度</label>
+    <input type="range" id="trailSlider" min="1" max="10" step="1" value="4">
+    <span class="val" id="trailOut">4</span>
+  </div>
+  <div class="row">
+    <label>音乐音量</label>
+    <input type="range" id="volSlider" min="0" max="1" step="0.05" value="0.6">
+    <span class="val" id="volOut">0.6</span>
+  </div>
+  <div class="hint">
+    拖动 = 旋转视角 · 滚轮 = 缩放 · 轻点画面 = 冲击波(锣声 + 音阶炸裂)<br>
+    旋律全部由图形实时生成:形态参数 x → 音高走向 · 粒子动能 → 节奏密度与音色明暗 · 粒子聚散 → 音量 · 切换图案 → 转调换音色;节拍会反过来让粒子随音乐脉动
+  </div>
+</div>
+<script>
+(function(){
+  'use strict';
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const $ = id => document.getElementById(id);
+  const xSlider=$('xSlider'), xOut=$('xOut');
+  const speedSlider=$('speedSlider'), speedOut=$('speedOut');
+  const countSlider=$('countSlider'), countOut=$('countOut');
+  const springSlider=$('springSlider'), springOut=$('springOut');
+  const swirlSlider=$('swirlSlider'), swirlOut=$('swirlOut');
+  const trailSlider=$('trailSlider'), trailOut=$('trailOut');
+  const volSlider=$('volSlider'), volOut=$('volOut');
+  const playBtn=$('playBtn'), morphBtn=$('morphBtn'), spinBtn=$('spinBtn'), musicBtn=$('musicBtn');
+
+  const NMAX = 16000;
+  const PI2 = Math.PI*2;
+
+  // ── 粒子状态 ──
+  const px=new Float32Array(NMAX), py=new Float32Array(NMAX), pz=new Float32Array(NMAX);
+  const vx=new Float32Array(NMAX), vy=new Float32Array(NMAX), vz=new Float32Array(NMAX);
+  const R1=new Float32Array(NMAX), R2=new Float32Array(NMAX), R3=new Float32Array(NMAX), R4=new Float32Array(NMAX);
+  for(let i=0;i<NMAX;i++){
+    R1[i]=Math.random(); R2[i]=Math.random(); R3[i]=Math.random(); R4[i]=Math.random();
+    const r=2*Math.cbrt(Math.random()), th=Math.random()*PI2, ph=Math.acos(2*Math.random()-1);
+    px[i]=r*Math.sin(ph)*Math.cos(th); py[i]=r*Math.cos(ph); pz[i]=r*Math.sin(ph)*Math.sin(th);
+  }
+
+  let playing=true, autoMorph=true, autoSpin=true;
+  let preset=0;
+  let t=0;
+  let xVal=parseFloat(xSlider.value);
+  let curMorphX=20;            // 当前生效的形态参数(音乐要读它)
+  let sEnergy=0, sSpread=0.6;  // 平滑后的"粒子动能/聚散"统计(音乐要读它)
+
+  // ── 摄像机 ──
+  let yaw=0.7, pitch=0.32, camDist=4.3;
+  let dragging=false, lastX=0, lastY=0, moved=0;
+
+  function resize(){
+    const rect=canvas.getBoundingClientRect();
+    const dpr=window.devicePixelRatio||1;
+    canvas.width=Math.round(rect.width*dpr);
+    canvas.height=Math.round(rect.height*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  resize();
+  window.addEventListener('resize',resize);
+
+  // ── 四套三维公式(同"三维光雕"版)──
+  const tgt=[0,0,0];
+  function target(i,N,t,mm){
+    const u=i/N;
+    if(preset===0){
+      const s=u*PI2;
+      const cx=1.25*Math.sin(2*s+t*0.40);
+      const cy=0.90*Math.sin(3*s+t*0.31)*(1+0.35*mm);
+      const cz=1.25*Math.sin(4*s+t*0.27+mm*2);
+      const th2=R1[i]*PI2+t*(0.4+R2[i]*0.8);
+      const rt=0.05+0.17*Math.pow(Math.abs(Math.sin(s*6-t*1.5)),1.5)*(1+0.5*Math.abs(mm));
+      tgt[0]=cx+rt*Math.cos(th2);
+      tgt[1]=cy+rt*Math.sin(th2)*0.8;
+      tgt[2]=cz+rt*Math.sin(th2+s*3);
+    }else if(preset===1){
+      const zn=1-2*((i+0.5)/N);
+      const rxy=Math.sqrt(Math.max(0,1-zn*zn));
+      const phi=i*2.39996323;
+      const theta=Math.acos(zn);
+      const h=3+mm*2.5, m1=Math.floor(h), fr=h-m1;
+      const base=Math.sin(m1*phi+t*0.6)*(1-fr)+Math.sin((m1+1)*phi+t*0.6)*fr;
+      const r=1.15*(1+0.45*base*Math.sin(4*theta-t*0.5)+0.10*Math.sin(7*theta+t*0.9));
+      tgt[0]=r*rxy*Math.cos(phi);
+      tgt[1]=r*zn;
+      tgt[2]=r*rxy*Math.sin(phi);
+    }else if(preset===2){
+      const s=u*PI2;
+      const q=3+mm*2;
+      const R=1.05+0.42*Math.cos(q*s+t*0.6);
+      const ang=2*s+t*0.25;
+      const sp=0.06*(0.5+R2[i]);
+      tgt[0]=1.15*R*Math.cos(ang)+sp*Math.cos(R1[i]*PI2+t);
+      tgt[1]=0.72*Math.sin(q*s+t*0.6)+sp*Math.sin(R3[i]*PI2+t*1.3);
+      tgt[2]=1.15*R*Math.sin(ang)+sp*Math.sin(R1[i]*PI2+t);
+    }else{
+      const wind=2.0+(mm+1)*1.6;
+      const rr=0.15+R1[i]*R1[i]*1.9;
+      const arm=Math.floor(R2[i]*3)/3*PI2;
+      const ang=arm+rr*wind-t*0.35+(R3[i]-0.5)*0.55*(0.35+rr);
+      tgt[0]=rr*Math.cos(ang);
+      tgt[1]=(R4[i]-0.5)*0.55*Math.exp(-rr*1.3)+0.03*Math.sin(rr*8-t);
+      tgt[2]=rr*Math.sin(ang);
+    }
+    return tgt;
+  }
+
+  // ══════════════════════════════════════════════════
+  // 音乐引擎:图形状态 → 五声音阶旋律
+  // 音高走向 ← 形态参数 x;节奏密度/音色亮度 ← 粒子动能;
+  // 音量 ← 粒子聚散;调式音色 ← 当前图案;锣 ← 冲击波
+  // ══════════════════════════════════════════════════
+  let AC=null, master=null, delaySend=null, noiseBuf=null;
+  let musicOn=false;
+  let nextNoteTime=0, step=0, lastBeatT=-9, melodyDeg=4;
+
+  // 每个图案一套"调性档案":root=主音(MIDI), scale=五声音阶, wave=音色, bass=低音进行(半音偏移)
+  const MUSIC=[
+    {root:57, scale:[0,3,5,7,10], wave:'triangle', bass:[0,3,8,10],  cut:2600, tMul:1.0 }, // 鱼龙舞:A羽调,弹拨感
+    {root:60, scale:[0,2,4,7,9],  wave:'sine',     bass:[0,-3,5,7],  cut:3200, tMul:1.0 }, // 球谐:C宫调,铃音
+    {root:62, scale:[0,2,5,7,10], wave:'sawtooth', bass:[0,-2,3,5],  cut:1500, tMul:1.1 }, // 环面:D商调,暖弦
+    {root:52, scale:[0,3,5,7,10], wave:'sine',     bass:[0,-4,3,-2], cut:2000, tMul:0.72}  // 星涡:E羽低音慢板
+  ];
+
+  const mtof=m=>440*Math.pow(2,(m-69)/12);
+  function degToMidi(root,scale,deg){
+    const oct=Math.floor(deg/scale.length);
+    const idx=((deg%scale.length)+scale.length)%scale.length;
+    return root+oct*12+scale[idx];
+  }
+
+  function initAudio(){
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    master=AC.createGain();
+    master.gain.value=parseFloat(volSlider.value);
+    const comp=AC.createDynamicsCompressor();
+    master.connect(comp); comp.connect(AC.destination);
+    // 回声(空间感):延迟+反馈+低通
+    delaySend=AC.createGain(); delaySend.gain.value=0.35;
+    const dly=AC.createDelay(1); dly.delayTime.value=0.29;
+    const fb=AC.createGain(); fb.gain.value=0.38;
+    const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=2200;
+    delaySend.connect(dly); dly.connect(fb); fb.connect(lp); lp.connect(dly);
+    dly.connect(master);
+    // 噪声缓冲(锣用)
+    noiseBuf=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);
+    const d=noiseBuf.getChannelData(0);
+    for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+    nextNoteTime=AC.currentTime+0.1;
+  }
+
+  function playNote(freq,t0,vel,dur,wave,cut){
+    const o=AC.createOscillator(); o.type=wave; o.frequency.value=freq;
+    const g=AC.createGain();
+    g.gain.setValueAtTime(0,t0);
+    g.gain.linearRampToValueAtTime(vel,t0+0.012);
+    g.gain.exponentialRampToValueAtTime(0.0008,t0+dur);
+    const f1=AC.createBiquadFilter(); f1.type='lowpass'; f1.frequency.value=cut; f1.Q.value=0.7;
+    o.connect(f1); f1.connect(g); g.connect(master); g.connect(delaySend);
+    o.start(t0); o.stop(t0+dur+0.05);
+    // 粒子多时加一把微失谐的"合唱"声部
+    if(parseInt(countSlider.value,10)>9000){
+      const o2=AC.createOscillator(); o2.type=wave; o2.frequency.value=freq*1.004;
+      const g2=AC.createGain();
+      g2.gain.setValueAtTime(0,t0);
+      g2.gain.linearRampToValueAtTime(vel*0.45,t0+0.012);
+      g2.gain.exponentialRampToValueAtTime(0.0008,t0+dur);
+      o2.connect(f1); f1.connect(g2); g2.connect(master);
+      o2.start(t0); o2.stop(t0+dur+0.05);
+    }
+  }
+
+  function playBass(midi,t0,dur){
+    const f=mtof(midi-12);
+    const o=AC.createOscillator(); o.type='triangle'; o.frequency.value=f;
+    const o2=AC.createOscillator(); o2.type='sine'; o2.frequency.value=f/2;
+    const g=AC.createGain();
+    g.gain.setValueAtTime(0,t0);
+    g.gain.linearRampToValueAtTime(0.13,t0+0.08);
+    g.gain.exponentialRampToValueAtTime(0.001,t0+dur);
+    o.connect(g); o2.connect(g); g.connect(master);
+    o.start(t0); o.stop(t0+dur+0.1); o2.start(t0); o2.stop(t0+dur+0.1);
+  }
+
+  function gong(){
+    if(!musicOn||!AC) return;
+    const t0=AC.currentTime;
+    // 噪声锣:带通从高扫到低
+    const src=AC.createBufferSource(); src.buffer=noiseBuf;
+    const bp=AC.createBiquadFilter(); bp.type='bandpass'; bp.Q.value=1.2;
+    bp.frequency.setValueAtTime(950,t0);
+    bp.frequency.exponentialRampToValueAtTime(160,t0+1.1);
+    const g=AC.createGain();
+    g.gain.setValueAtTime(0.5,t0);
+    g.gain.exponentialRampToValueAtTime(0.001,t0+1.3);
+    src.connect(bp); bp.connect(g); g.connect(master); g.connect(delaySend);
+    src.start(t0); src.stop(t0+1.4);
+    // 低频震感
+    const o=AC.createOscillator(); o.type='sine';
+    o.frequency.setValueAtTime(84,t0);
+    o.frequency.exponentialRampToValueAtTime(45,t0+1.2);
+    const g2=AC.createGain();
+    g2.gain.setValueAtTime(0.3,t0);
+    g2.gain.exponentialRampToValueAtTime(0.001,t0+1.4);
+    o.connect(g2); g2.connect(master);
+    o.start(t0); o.stop(t0+1.5);
+    // 炸开后的一串下行五声音阶
+    const cfg=MUSIC[preset];
+    for(let k=0;k<5;k++){
+      const m=degToMidi(cfg.root+12,cfg.scale,9-k*2);
+      playNote(mtof(m),t0+0.06+k*0.085,0.16,0.5,cfg.wave,cfg.cut+800);
+    }
+  }
+
+  // 让公式亲自"点歌":取一个探针粒子此刻目标点的高度,微调旋律走向
+  function probeOffset(time){
+    const N=parseInt(countSlider.value,10);
+    const mm=curMorphX/60;
+    const g=target(((step*61)%N)|0, N, t, mm);
+    return Math.max(-2,Math.min(2,Math.round(g[1]*2)));
+  }
+
+  // 每一步(八分音符)由当前图形状态决定弹什么
+  function scheduleStep(step,time,spb){
+    const cfg=MUSIC[preset];
+    const bar=Math.floor(step/8)%4, beat8=step%8;
+    if(beat8===0){
+      playBass(cfg.root+cfg.bass[bar],time,spb*7);
+      lastBeatT=time;
+    }else if(beat8%2===0){
+      lastBeatT=time;
+    }
+    // 旋律:x 决定音高走向,音符逐级走向它(级进旋律比跳进悦耳)
+    const n01=(curMorphX+60)/120;
+    const degTarget=Math.round(n01*9);
+    const dens=0.3+sEnergy*0.6;                       // 动能→出音概率
+    if(beat8%2===0 ? Math.random()<0.55+dens*0.4 : Math.random()<dens*0.55){
+      let d=degTarget-melodyDeg;
+      melodyDeg+=Math.max(-1,Math.min(1,d));
+      if(Math.random()<0.3) melodyDeg+=Math.random()<0.5?-1:1;
+      melodyDeg=Math.max(0,Math.min(9,melodyDeg));
+      const deg=Math.max(0,Math.min(11,melodyDeg+probeOffset(time)));
+      const m=degToMidi(cfg.root+12,cfg.scale,deg);
+      const vel=0.10+0.20*Math.min(1,sSpread/2)+0.08*sEnergy;   // 聚散→音量
+      const cut=cfg.cut*(0.55+sEnergy*0.9);                     // 动能→明暗
+      playNote(mtof(m),time,vel,spb*1.9,cfg.wave,cut);
+    }
+    // 高音星光:粒子跑得快时,反拍上撒一点高八度短音
+    if(beat8%2===1 && sEnergy>0.45 && Math.random()<sEnergy-0.25){
+      const m=degToMidi(cfg.root+24,cfg.scale,((Math.random()*5)|0)+5);
+      playNote(mtof(m),time,0.07,0.25,'sine',5200);
+    }
+  }
+
+  // 前瞻式调度器(Web Audio 标准做法:提前 0.12 秒排好音符)
+  setInterval(function(){
+    if(!musicOn||!AC) return;
+    // 页面被隐藏时浏览器会把定时器降频,硬放会断断续续 → 直接停拍,回前台自动续上
+    if(!playing||document.hidden){ nextNoteTime=AC.currentTime+0.1; return; }
+    const speed=parseFloat(speedSlider.value);
+    const bpm=78*Math.pow(speed,0.5)*MUSIC[preset].tMul;   // 动画速度→曲速
+    const spb=60/bpm/2;                                    // 一个八分音符的秒数
+    while(nextNoteTime<AC.currentTime+0.12){
+      scheduleStep(step,nextNoteTime,spb);
+      nextNoteTime+=spb;
+      step=(step+1)%32;
+    }
+  },25);
+
+  // ── 交互 ──
+  xSlider.addEventListener('input',()=>{xVal=parseFloat(xSlider.value);xOut.textContent=xVal.toFixed(0);});
+  speedSlider.addEventListener('input',()=>{speedOut.textContent=parseFloat(speedSlider.value).toFixed(1);});
+  countSlider.addEventListener('input',()=>{countOut.textContent=countSlider.value;});
+  springSlider.addEventListener('input',()=>{springOut.textContent=parseFloat(springSlider.value).toFixed(1);});
+  swirlSlider.addEventListener('input',()=>{swirlOut.textContent=parseFloat(swirlSlider.value).toFixed(1);});
+  trailSlider.addEventListener('input',()=>{trailOut.textContent=trailSlider.value;});
+  volSlider.addEventListener('input',()=>{
+    volOut.textContent=parseFloat(volSlider.value).toFixed(2);
+    if(master) master.gain.value=parseFloat(volSlider.value);
+  });
+
+  musicBtn.addEventListener('click',()=>{
+    if(!AC) initAudio();
+    if(AC.state==='suspended') AC.resume();
+    musicOn=!musicOn;
+    if(musicOn) nextNoteTime=AC.currentTime+0.1;
+    musicBtn.textContent=musicOn?'♪ 唱歌中…':'♪ 让它唱歌';
+    musicBtn.classList.toggle('on',musicOn);
+  });
+  playBtn.addEventListener('click',()=>{
+    playing=!playing;
+    playBtn.textContent=playing?'暂停':'播放';
+  });
+  morphBtn.addEventListener('click',()=>{
+    autoMorph=!autoMorph;
+    morphBtn.textContent='自动变形:'+(autoMorph?'开':'关');
+    morphBtn.classList.toggle('on',autoMorph);
+    xSlider.disabled=autoMorph;
+  });
+  spinBtn.addEventListener('click',()=>{
+    autoSpin=!autoSpin;
+    spinBtn.textContent='自动旋转:'+(autoSpin?'开':'关');
+    spinBtn.classList.toggle('on',autoSpin);
+  });
+  xSlider.disabled=autoMorph;
+
+  document.querySelectorAll('.preset').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      preset=parseInt(btn.dataset.p,10);
+      document.querySelectorAll('.preset').forEach(b=>b.classList.toggle('on',b===btn));
+    });
+  });
+
+  canvas.addEventListener('pointerdown',e=>{
+    dragging=true; moved=0;
+    lastX=e.clientX; lastY=e.clientY;
+    canvas.setPointerCapture(e.pointerId);
+    canvas.style.cursor='grabbing';
+  });
+  canvas.addEventListener('pointermove',e=>{
+    if(!dragging) return;
+    const dx=e.clientX-lastX, dy=e.clientY-lastY;
+    moved+=Math.abs(dx)+Math.abs(dy);
+    yaw+=dx*0.0055;
+    pitch=Math.max(-1.45,Math.min(1.45,pitch+dy*0.0055));
+    lastX=e.clientX; lastY=e.clientY;
+  });
+  canvas.addEventListener('pointerup',()=>{
+    dragging=false;
+    canvas.style.cursor='grab';
+    if(moved<6){ shockwave(); gong(); }
+  });
+  canvas.addEventListener('wheel',e=>{
+    e.preventDefault();
+    camDist=Math.max(1.8,Math.min(9,camDist*Math.exp(e.deltaY*0.0012)));
+  },{passive:false});
+
+  function shockwave(){
+    const N=parseInt(countSlider.value,10);
+    for(let i=0;i<N;i++){
+      const d=Math.sqrt(px[i]*px[i]+py[i]*py[i]+pz[i]*pz[i])+1e-4;
+      const imp=3.2/(0.45+d*d);
+      vx[i]+=px[i]/d*imp+(R1[i]-0.5)*0.6;
+      vy[i]+=py[i]/d*imp+(R2[i]-0.5)*0.6;
+      vz[i]+=pz[i]/d*imp+(R3[i]-0.5)*0.6;
+    }
+  }
+
+  // ── 颜色缓存 ──
+  const colorCache=Object.create(null);
+  function col(h,l){
+    h=((h|0)%360+360)%360; h-=h%4;
+    l=l|0; l-=l%5;
+    const k=h*100+l;
+    let c=colorCache[k];
+    if(!c){c='hsla('+h+',100%,'+l+'%,0.9)'; colorCache[k]=c;}
+    return c;
+  }
+
+  // ── 主循环 ──
+  let last=performance.now();
+  function loop(now){
+    const dtms=Math.min(now-last,50);
+    last=now;
+    const speed=parseFloat(speedSlider.value);
+    const N=parseInt(countSlider.value,10);
+
+    if(playing){
+      const sdt=dtms*0.001*speed;
+      t+=sdt;
+      if(autoSpin&&!dragging) yaw+=sdt*0.12;
+
+      curMorphX=autoMorph?45*Math.sin(t*0.13):xVal;
+      if(autoMorph) xOut.textContent=curMorphX.toFixed(0);
+      const mm=curMorphX/60;
+
+      const springK=parseFloat(springSlider.value)*6;
+      const swirlK=parseFloat(swirlSlider.value);
+      const damp=Math.exp(-4.2*sdt);
+
+      let accSpd=0, accR=0, cnt=0;
+      for(let i=0;i<N;i++){
+        const g=target(i,N,t,mm);
+        vx[i]=(vx[i]+(g[0]-px[i])*springK*sdt+(-pz[i])*swirlK*sdt)*damp;
+        vy[i]=(vy[i]+(g[1]-py[i])*springK*sdt)*damp;
+        vz[i]=(vz[i]+(g[2]-pz[i])*springK*sdt+( px[i])*swirlK*sdt)*damp;
+        px[i]+=vx[i]*sdt; py[i]+=vy[i]*sdt; pz[i]+=vz[i]*sdt;
+        const rsq=px[i]*px[i]+py[i]*py[i]+pz[i]*pz[i];
+        if(rsq>1600){ px[i]=g[0]; py[i]=g[1]; pz[i]=g[2]; vx[i]=vy[i]=vz[i]=0; }
+        if((i&15)===0){ // 抽样统计:动能与聚散,喂给音乐
+          accSpd+=Math.abs(vx[i])+Math.abs(vy[i])+Math.abs(vz[i]);
+          accR+=Math.sqrt(rsq);
+          cnt++;
+        }
+      }
+      if(cnt>0){
+        const e01=Math.min(1,(accSpd/cnt)/2.4);
+        sEnergy+=(e01-sEnergy)*0.06;
+        sSpread+=((accR/cnt)-sSpread)*0.06;
+      }
+    }
+
+    // 节拍脉冲:音乐每拍让粒子微微"呼吸"一下
+    let beatEnv=0;
+    if(musicOn&&AC&&playing){
+      const d=AC.currentTime-lastBeatT;
+      beatEnv=Math.max(0,Math.min(1,1-Math.abs(d)/0.22));
+    }
+
+    // 绘制
+    const rect=canvas.getBoundingClientRect();
+    const w=rect.width, h=rect.height;
+    const trailAlpha=0.5/parseInt(trailSlider.value,10);
+    ctx.globalCompositeOperation='source-over';
+    ctx.fillStyle='rgba(0,0,0,'+trailAlpha.toFixed(3)+')';
+    ctx.fillRect(0,0,w,h);
+    ctx.globalCompositeOperation='lighter';
+
+    const cy_=Math.cos(yaw), sy_=Math.sin(yaw);
+    const cp_=Math.cos(pitch), sp_=Math.sin(pitch);
+    const fov=Math.min(w,h)*1.05;
+    const cxs=w/2, cys=h/2;
+    const sizeMul=1+0.22*beatEnv;
+    const lightAdd=6*beatEnv;
+
+    for(let i=0;i<N;i++){
+      const x1=cy_*px[i]+sy_*pz[i];
+      const z1=-sy_*px[i]+cy_*pz[i];
+      const y2=cp_*py[i]-sp_*z1;
+      const zc=sp_*py[i]+cp_*z1+camDist;
+      if(zc<0.15) continue;
+      const f=fov/zc;
+      const sx=cxs+x1*f, syy=cys-y2*f;
+      if(sx<-4||sx>w+4||syy<-4||syy>h+4) continue;
+      const spd=Math.abs(vx[i])+Math.abs(vy[i])+Math.abs(vz[i]);
+      const hue=(preset===3
+        ? Math.sqrt(px[i]*px[i]+pz[i]*pz[i])*130
+        : (i/N)*300)+t*24+spd*18;
+      const light=Math.max(42,Math.min(80, 30+130/zc+spd*9+lightAdd));
+      const size=Math.max(0.7,Math.min(3.4,4.6/zc*sizeMul));
+      ctx.fillStyle=col(hue,light);
+      ctx.fillRect(sx,syy,size,size);
+    }
+
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
